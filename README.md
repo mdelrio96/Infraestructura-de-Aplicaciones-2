@@ -37,15 +37,6 @@ El objetivo de este repositorio es centralizar y documentar los avances, evaluac
 
 ---
 
-## 🖼️ Ejemplo de Evidencia Gráfica
-
-Puedes incluir imágenes de los resultados de las pruebas directamente desde el repositorio.  
-Ejemplo:
-
-![Infraestructura Ejemplo](https://github.com/mdelrio96/Infraestructura-de-Aplicaciones-2/blob/main/imagenes/infraestructura.png?raw=true)
-
----
-
 ## ✅ Estado del Proyecto
 
 Este repositorio se encuentra en constante actualización conforme avance la asignatura.
