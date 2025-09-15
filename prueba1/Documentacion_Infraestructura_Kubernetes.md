@@ -1,5 +1,9 @@
 ## Evaluación 1 - Orquestación de contenedores
 ---
+Alumno: Marceo del Río Minder
+Fecha de entrega: 15-09-2025
+Sección: INY1106-001V
+Docente: Oscar Rivera P.
 
 ## Resumen de evaluación
 
