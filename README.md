@@ -1,6 +1,5 @@
 # Infraestructura de Aplicaciones 2
-
-[![Repo Size](https://img.shields.io/github/repo-size/mdelrio96/Infraestructura-de-Aplicaciones-2?color=blue&label=Tamaño%20del%20Repo)](https://github.com/mdelrio96/Infraestructura-de-Aplicaciones-2)  
+ 
 [![Última Actualización](https://img.shields.io/github/last-commit/mdelrio96/Infraestructura-de-Aplicaciones-2?color=green&label=Última%20Actualización)](https://github.com/mdelrio96/Infraestructura-de-Aplicaciones-2/commits/main)  
 [![Estado](https://img.shields.io/badge/Estado-En%20Desarrollo-yellow)](https://github.com/mdelrio96/Infraestructura-de-Aplicaciones-2)
 
