@@ -1,0 +1,58 @@
+---
+# Service para MariaDB (ClusterIP - acceso interno)
+apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb-service
+  namespace: wordpress-phpmyadmin-db
+  labels:
+    app: mariadb
+spec:
+  type: ClusterIP
+  ports:
+  - port: 3306
+    targetPort: 3306
+    protocol: TCP
+    name: mysql
+  selector:
+    app: mariadb
+
+---
+# Service para WordPress (NodePort - acceso externo)
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-service
+  namespace: wordpress-phpmyadmin-db
+  labels:
+    app: wordpress
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+    nodePort: 30088
+  selector:
+    app: wordpress
+
+---
+# Service para phpMyAdmin (NodePort - acceso externo)
+apiVersion: v1
+kind: Service
+metadata:
+  name: phpmyadmin-service
+  namespace: wordpress-phpmyadmin-db
+  labels:
+    app: phpmyadmin
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+    nodePort: 30080
+  selector:
+    app: phpmyadmin

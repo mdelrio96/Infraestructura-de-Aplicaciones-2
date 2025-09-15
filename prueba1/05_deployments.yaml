@@ -1,0 +1,250 @@
+---
+# Deployment para MariaDB
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb
+  namespace: wordpress-phpmyadmin-db
+  labels:
+    app: mariadb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mariadb
+  template:
+    metadata:
+      labels:
+        app: mariadb
+    spec:
+      containers:
+      - name: mariadb
+        image: bitnami/mariadb:latest
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MARIADB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: root-password
+        - name: MARIADB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: database
+        - name: MARIADB_USER
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: username
+        - name: MARIADB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: password
+        - name: MARIADB_EXTRA_DATABASES
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: phpmyadmin-database
+        - name: MARIADB_EXTRA_USER
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: phpmyadmin-username
+        - name: MARIADB_EXTRA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: phpmyadmin-password
+        volumeMounts:
+        - name: mariadb-storage
+          mountPath: /bitnami/mariadb
+        - name: mariadb-config
+          mountPath: /opt/bitnami/mariadb/conf/conf.d
+        - name: mariadb-init
+          mountPath: /docker-entrypoint-initdb.d
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      volumes:
+      - name: mariadb-storage
+        persistentVolumeClaim:
+          claimName: mariadb-pvc
+      - name: mariadb-config
+        configMap:
+          name: mariadb-config
+      - name: mariadb-init
+        configMap:
+          name: mariadb-config
+          items:
+          - key: init.sql
+            path: init.sql
+
+---
+# Deployment para WordPress
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-deployment
+  namespace: wordpress-phpmyadmin-db
+  labels:
+    app: wordpress
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      containers:
+      - name: wordpress
+        image: bitnami/wordpress:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: WORDPRESS_DATABASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: wordpress-config
+              key: WORDPRESS_DB_HOST
+        - name: WORDPRESS_DATABASE_PORT_NUMBER
+          valueFrom:
+            configMapKeyRef:
+              name: wordpress-config
+              key: WORDPRESS_DB_PORT
+        - name: WORDPRESS_DATABASE_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: wordpress-config
+              key: WORDPRESS_DB_NAME
+        - name: WORDPRESS_DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: username
+        - name: WORDPRESS_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: password
+        - name: WORDPRESS_TABLE_PREFIX
+          valueFrom:
+            configMapKeyRef:
+              name: wordpress-config
+              key: WORDPRESS_TABLE_PREFIX
+        - name: WORDPRESS_DEBUG_MODE
+          valueFrom:
+            configMapKeyRef:
+              name: wordpress-config
+              key: WORDPRESS_DEBUG
+        - name: WORDPRESS_USERNAME
+          value: "admin"
+        - name: WORDPRESS_PASSWORD
+          value: "admin123"
+        - name: WORDPRESS_EMAIL
+          value: "admin@example.com"
+        - name: WORDPRESS_FIRST_NAME
+          value: "Admin"
+        - name: WORDPRESS_LAST_NAME
+          value: "User"
+        - name: WORDPRESS_BLOG_NAME
+          value: "My WordPress Blog"
+        volumeMounts:
+        - name: wordpress-storage
+          mountPath: /bitnami/wordpress
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      volumes:
+      - name: wordpress-storage
+        persistentVolumeClaim:
+          claimName: wordpress-pvc
+
+---
+# Deployment para phpMyAdmin
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phpmyadmin
+  namespace: wordpress-phpmyadmin-db
+  labels:
+    app: phpmyadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: phpmyadmin
+  template:
+    metadata:
+      labels:
+        app: phpmyadmin
+    spec:
+      containers:
+      - name: phpmyadmin
+        image: bitnami/phpmyadmin:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DATABASE_HOST
+          value: "mariadb-service"
+        - name: DATABASE_PORT_NUMBER
+          value: "3306"
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: phpmyadmin-username
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: phpmyadmin-password
+        - name: DATABASE_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: root-password
+        - name: PHPMYADMIN_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: phpmyadmin-username
+        - name: PHPMYADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: phpmyadmin-password
+        - name: APACHE_HTTP_PORT_NUMBER
+          value: "8080"
+        - name: PHPMYADMIN_SKIP_BOOTSTRAP
+          value: "no"
+        - name: PHPMYADMIN_ALLOW_ARBITRARY_SERVER
+          value: "yes"
+        - name: PHPMYADMIN_ALLOW_NO_PASSWORD
+          value: "no"
+        - name: PHPMYADMIN_ABSOLUTE_URI
+          value: "http://localhost:30080"
+        - name: PHPMYADMIN_DEFAULT_SERVER
+          value: "mariadb-service"
+        - name: PHPMYADMIN_DEFAULT_SERVER_PORT
+          value: "3306"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
