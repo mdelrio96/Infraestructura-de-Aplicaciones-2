@@ -1,6 +1,12 @@
 ## Evaluación 1 - Orquestación de contenedores
 ---
 
+- Alumno: Marceo del Río Minder
+- Fecha de entrega: 15-09-2025
+- Sección: INY1106-001V
+- Docente: Oscar Rivera P.
+
+---
 ## Resumen de evaluación
 
 El presente informe tiene como finalidad evaluar la implementación de una infraestructura de microservicios sobre Kubernetes, utilizando Docker Desktop como entorno de ejecución. La solución despliega y orquesta tres componentes principales: WordPress, phpMyAdmin y MariaDB. La arquitectura busca demostrar los conceptos fundamentales de orquestación de contenedores, incluyendo aislamiento de recursos, gestión declarativa, almacenamiento persistente, configuración segura y exposición de servicios.
@@ -730,6 +736,7 @@ kubectl apply -f 03_storage.yaml
 kubectl apply -f 04_services.yaml
 kubectl apply -f 05_deployments.yaml
 ```
+![Despliegue](https://github.com/mdelrio96/Infraestructura-de-Aplicaciones-2/blob/main/prueba1/imagenes/Despliegue_pod.png)
 
 ### Verificación
 ```bash
@@ -738,18 +745,8 @@ kubectl get services -n wordpress-phpmyadmin-db
 kubectl get pv
 kubectl get pvc -n wordpress-phpmyadmin-db
 ```
+![Validacion](https://github.com/mdelrio96/Infraestructura-de-Aplicaciones-2/blob/main/prueba1/imagenes/Servicios_desplegados.png)
 
-### Escalado
-```bash
-kubectl scale deployment wordpress-deployment --replicas=3 -n wordpress-phpmyadmin-db
-```
-
-### Eliminación
-```bash
-kubectl delete namespace wordpress-phpmyadmin-db
-```
-
----
 
 ## Acceso a las Aplicaciones
 
@@ -757,12 +754,34 @@ kubectl delete namespace wordpress-phpmyadmin-db
   - Usuario: admin
   - Contraseña: admin123
 
+**Validación de funcionamiento**
+![Wordpress](https://github.com/mdelrio96/Infraestructura-de-Aplicaciones-2/blob/main/prueba1/imagenes/wordpress-localhost.png)
+
 - **phpMyAdmin**: http://localhost:30080
   - Usuario: admin
   - Contraseña: password123
   - Servidor: mariadb-service
   - Puerto: 3306
-
+![PHPMyAdmin](https://github.com/mdelrio96/Infraestructura-de-Aplicaciones-2/blob/main/prueba1/imagenes/phpmyadmin-localhost.png)
 ---
+
+
+
+### Eliminación
+```bash
+#Para realizar la eliminación de los contenedores, se puede realizar de la siguiente manera:
+kubectl delete -f 05_deployments.yaml
+kubectl delete -f 04_services.yaml
+kubectl delete -f 03_storage.yaml
+kubectl delete -f 02_config-and-secrets.yaml
+kubectl delete -f 01_namespace.yaml
+
+#O también se puede utilizar un solo comando 
+kubectl delete namespace wordpress-phpmyadmin-db
+```
+![Eliminacion](https://github.com/mdelrio96/Infraestructura-de-Aplicaciones-2/blob/main/prueba1/imagenes/Eliminación%20del%20despliegue.png)
+---
+
+
 
 
