@@ -1,10 +1,12 @@
 ## Evaluación 1 - Orquestación de contenedores
 ---
-Alumno: Marceo del Río Minder
-Fecha de entrega: 15-09-2025
-Sección: INY1106-001V
-Docente: Oscar Rivera P.
 
+- Alumno: Marceo del Río Minder
+- Fecha de entrega: 15-09-2025
+- Sección: INY1106-001V
+- Docente: Oscar Rivera P.
+
+---
 ## Resumen de evaluación
 
 El presente informe tiene como finalidad evaluar la implementación de una infraestructura de microservicios sobre Kubernetes, utilizando Docker Desktop como entorno de ejecución. La solución despliega y orquesta tres componentes principales: WordPress, phpMyAdmin y MariaDB. La arquitectura busca demostrar los conceptos fundamentales de orquestación de contenedores, incluyendo aislamiento de recursos, gestión declarativa, almacenamiento persistente, configuración segura y exposición de servicios.
